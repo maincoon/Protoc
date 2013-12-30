@@ -1,0 +1,41 @@
+﻿Protoc is context free protocol compiler and generator based on XML declarations and code snippets
+
+About
+-----
+
+Workset consists of two XML files - protocol schema and generator snippets.
+First XML file declares packet formats using simple syntax (let's call it "schema"). 
+Second XML file defines code snippets used to create global packet parser and parser\serializer pair for each packet type (let's call it "snippets").
+
+XML schema features:
+	- abstract packet declaration and derivation
+	- int, numeric, string and binary field types
+	- numeric packet id representation
+	- optional default values for each field
+	
+XML snippets features:
+	- template syntax for context variable replacements
+	- number of context variables for each template
+	- target language is free choice
+	- header and footer templates
+	- default values for each field type
+	- packet separator template
+	- root namespace template (based on JavaScript commonly used syntax)
+	- nested namespace template
+	- packet declaration template
+	- packet size declaration template
+	- packet constructor template
+	- packet serializer and deserializer templates
+	- global parser template
+	- global parser case template
+	- field templates for each type
+	
+Folder ./bin contains example test.xml schema and two sample snippets that could be useful to figure out how dos it all works.
+Snippets created for JavaScript and C++ languages and this is NOT real working examples.
+
+Requirements
+------------
+
+C++ compiler with kind of working STL
+GNU Make to build under UNIX-like systems
+VS2012 or higher to build under win32
