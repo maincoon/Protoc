@@ -1,0 +1,320 @@
+﻿<snippets>
+	<!-- 
+		Added before content
+		Variables:
+			$ns$ - namespace
+	-->
+	<Header>
+	<![CDATA[
+/**
+* Automaticaly generated file for $ns$
+*/
+	]]>
+	</Header>
+	
+	<!-- 
+		Added after content
+		Variables:
+			$ns$ - namespace
+	-->
+	<Footer>
+	<![CDATA[
+/**
+* End of generated file for $ns$
+*/
+]]>
+	</Footer>
+	
+	<!-- 
+		Default values for each type 
+		If not specified default value is empty string
+	-->
+	<Default type="int">0</Default>
+	<Default type="string"></Default>
+	<Default type="binary">null</Default>
+	<Default type="numeric">0.0</Default>
+	
+	<!--
+		Separates packet definitions.
+	-->
+	<PackSeparator><![CDATA[,
+]]></PackSeparator>
+	
+	<!--
+		Root namespace definition
+		Variables:
+			$ns$ - full namespace name
+			$name$ - root namespace name
+			$content$ - namespace content (nested namespaces or packet definitions)
+	-->
+	<NSRoot>
+	<![CDATA[
+// namespace $ns$
+var $name$ = {
+	$content$
+};
+]]>
+	</NSRoot>
+	
+	<!--
+		Nested namespace definition
+		Variables:
+			$ns$ - full namespace name
+			$name$ - namespace name
+			$content$ - namespace content (nested namespaces or packet definitions)
+	-->
+	<NSNext>
+	<![CDATA[
+	$name$ : {
+		$content$
+	}
+]]>
+	</NSNext>
+	
+	<!--
+		Packet definitions
+		Variables:
+			$ns$ - namespace
+			$name$ - packet name
+			$id$ - packet id
+			$parent$ - parent packet name
+			$fields$ - fields format definition (see <Field><Format/></Field> definitions)
+			$serializer$ - serializer definition (see <Serializer/>)
+			$deserializer$ - deserializer definition (see <Deserializer/>)
+			$size$ - size definition (see <Size/>)
+			$ctor$ - constructor definition (if available for destination language)
+	-->
+	<Pack>
+	<![CDATA[
+		$name$ : function () {
+			$fields$
+			_this = this;
+			this.Serialize = $serializer$
+			this.Deserialize = $deserializer$
+			this.Size = $size$
+			return this;
+		}]]>
+	</Pack>
+	
+	<!--
+		Packet size definition
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$parent$ - parent packet name
+			$fields$ - field size definition summ (see <Pack><size/></Pack>)
+	-->
+	<Size>
+	<![CDATA[
+			function() {
+				return 1 + $fields$;
+			};
+	]]>
+	</Size>
+	
+	<!--
+		Packet constructor definition
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$fields$ - fields ctor definition (see <Field><Ctor/><Field> definition
+			$parent$ - parent packet name if available
+	-->
+	<Ctor/>
+		<!--
+		Packet serializer definition
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$parent$ - parent packet name
+			$fields$ - field serialize definitions (see <Pack><serializer/></Pack>)
+	-->
+	<Serializer>
+		<![CDATA[
+			function () {
+				var buffer = new Buffer(_this.Size());
+				var offset = 0;
+				buffer.writeUInt8($id$, offset); 
+				offset += 1;
+				$fields$
+				return buffer;
+			};
+	]]>
+	</Serializer>
+	
+	<!--
+		Packet deserializer definition
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$parent$ - parent packet name
+			$fields$ - field deserialize definitions (see <Pack><deserialize/></Pack>)
+	-->
+	<Deserializer>
+	<![CDATA[
+			function (buffer) {
+				var offset = 0;
+				if ( buffer.readUInt8(offset) == $id$ ) {
+					offset ++;
+					$fields$
+					return _this;
+				} else {
+					return null;
+				} 
+			};
+	]]>
+	</Deserializer>
+	
+	<!--
+		Final namespace packet parser definition
+		Variables:
+			$ns$ - namespace
+			$fields$ - parser field definitions (see <ParserCase/>)
+	-->
+	<Parser>
+	<![CDATA[
+		Deserialize : function (packet) {
+			var buffer = protoUtils.toBuffer(packet);
+			var type = buffer.readInt8(0);
+			switch(type) {
+					$fields$
+				default:
+					throw Error('Unknown packet type: ' + type);
+			}
+		}
+	]]>
+	</Parser>
+
+	<!--
+		Namespace packet parser case
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$parent$ - parent packet name
+	-->
+	<ParserCase>
+		<![CDATA[
+				case $id$:
+					{
+						var pack = new $ns$.$name$();
+						return pack.Deserialize(buffer);
+					}
+					break;
+		]]>
+	</ParserCase>
+	
+	<!--
+		Field definition
+		Attributes:
+			type - destination field type int, numeric, string, binary
+		Contains:
+			format - definition of field in packet
+			ctor - definition of field in ctor
+			serialize - definition of field serialization
+			deserialize - definition of field deserialization
+			parser - parser case definition
+			size - field size definition
+		Variables:
+			$ns$ - namespace
+			$pack$ - packet name
+			$id$ - packet id
+			$name$ - field name
+			$num$ - field number
+			$parent$ - parent packet name
+			$default$ - default value
+			$size$ - size definition
+	-->
+	<Field type="int">
+		<Format>
+		<![CDATA[
+			this.$name$ = $default$;
+		]]>
+		</Format>
+		<Serialize>
+		<![CDATA[
+				buffer.writeInt32LE(_this.$name$, offset);
+				offset += $size$;
+		]]>
+		</Serialize>
+		<Deserialize>
+		<![CDATA[
+					_this.$name$ = buffer.readInt32LE(offset);
+					offset += $size$;
+		]]>
+		</Deserialize>
+		<Size>4</Size>
+		<Ctor/>
+	</Field>
+	
+	<!--
+		String sample
+	-->
+	<Field type="string">
+		<Format>
+		<![CDATA[
+			this.$name$ = '$default$';
+		]]>
+		</Format>
+		<Serialize>
+		<![CDATA[
+				{
+					var slen = Bunker.getUTF8Length(_this.$name$);
+					buffer.writeInt16LE(slen, offset);
+					offset += 2;
+					buffer.write(this.$name$, offset);
+					offset += slen;
+				}
+		]]>
+		</Serialize>
+		<Deserialize>
+		<![CDATA[
+					{
+						var slen = buffer.readInt16LE(offset);
+						offset+=2;
+						_this.$name$ = buffer.toString('utf-8', offset, offset+slen);
+						offset+=slen;
+					}
+		]]>
+		</Deserialize>
+		<Size>Bunker.getUTF8Length(_this.$name$) + 2</Size>
+		<Ctor/>
+	</Field>
+	
+	<!--
+		Binary sample
+	-->
+	<Field type="binary">
+		<Format>
+		<![CDATA[
+			this.$name$ = $default$;
+		]]>
+		</Format>
+		<Serialize>
+		<![CDATA[
+				{
+					buffer.writeInt16LE($size$, offset);
+					offset += 2;
+					_this.$name$.copy(buffer, offset);
+					offset += $size$;
+				}
+		]]>
+		</Serialize>
+		<Deserialize>
+		<![CDATA[
+					{
+						var blen = buffer.readInt16LE(offset);
+						offset +=2;
+						_this.$name$ = buffer.slice(offset, blen);
+						offset += blen;
+					}
+		]]>
+		</Deserialize>
+		<Size>_this.$name$.length</Size>
+		<Ctor/>
+	</Field>
+</snippets>

@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\common\TLog.cpp">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\TXMLParser.cpp">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="main\main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml\tinyprint.cpp">
+      <Filter>src\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml\tinystr.cpp">
+      <Filter>src\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml\tinyxml.cpp">
+      <Filter>src\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml\tinyxmlerror.cpp">
+      <Filter>src\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml\tinyxmlparser.cpp">
+      <Filter>src\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\protoc\ProtocFormatter.cpp">
+      <Filter>src\protoc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\protoc\ProtocSchema.cpp">
+      <Filter>src\protoc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\protoc\ProtocData.cpp">
+      <Filter>src\protoc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\protoc\Utils.cpp">
+      <Filter>src\protoc</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sdk\common\TLog.h">
+      <Filter>sdk\common</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\common\TXMLParser.h">
+      <Filter>sdk\common</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\tinyxml\tinyprint.h">
+      <Filter>sdk\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\tinyxml\tinystr.h">
+      <Filter>sdk\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\tinyxml\tinyxml.h">
+      <Filter>sdk\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\protoc\ProtocFormatter.h">
+      <Filter>sdk\protoc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\protoc\Utils.h">
+      <Filter>sdk\protoc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\protoc\ProtocSchema.h">
+      <Filter>sdk\protoc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\protoc\ProtocData.h">
+      <Filter>sdk\protoc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="sdk">
+      <UniqueIdentifier>{88a91644-2729-4292-94b3-1efe3db68965}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8ee7bc20-38d8-45ca-b7dd-a51b213b6f6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\protoc">
+      <UniqueIdentifier>{35fc6c7a-b3ae-4939-ad9a-59c71e5f8056}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sdk\tinyxml">
+      <UniqueIdentifier>{b4001489-a1d5-4036-8256-c4eb72d1b787}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sdk\common">
+      <UniqueIdentifier>{62001300-136d-4f32-b729-cb181380a61c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sdk\protoc">
+      <UniqueIdentifier>{a3a3971b-a0d1-444a-b578-f35c2ddbd72e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{676342d9-59ef-4dbd-bd7f-f49176ab678a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\common">
+      <UniqueIdentifier>{db7d4457-31e9-43ee-8774-53616145d634}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\tinyxml">
+      <UniqueIdentifier>{8f0658e0-9950-4cc8-a48b-c14b56117f6a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

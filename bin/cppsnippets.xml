@@ -1,0 +1,310 @@
+﻿<snippets>
+	<!-- 
+		Added before content
+		Variables:
+			$ns$ - namespace
+	-->
+	<Header>
+	<![CDATA[
+/**
+* Automaticaly generated file for $ns$
+*/
+#include "common/TStr.h"
+
+// packet interface could be defined somewhere else
+class IPacket {
+public:
+	virtual Buffer *Serialize () = 0;
+	virtual IPacket* Deserialize() = 0;
+	virtual unsigned int Size () const = 0;
+};
+
+	]]>
+	</Header>
+	
+	<!-- 
+		Added after content
+		Variables:
+			$ns$ - namespace
+	-->
+	<Footer>
+	<![CDATA[
+/**
+* End of generated file for $ns$
+*/
+]]>
+	</Footer>
+
+	<!-- 
+		Default values for each type 
+		If not specified default value is empty string
+	-->
+	<Default type="int">0</Default>
+	<Default type="string"></Default>
+	<Default type="binary">NULL</Default>
+	<Default type="numeric">0.0</Default>
+	
+	<!--
+		Separates packet definitions.
+	-->
+	<PackSeparator/>
+	
+	<!--
+		Root namespace definition
+		Variables:
+			$ns$ - full namespace name
+			$name$ - root namespace name
+			$content$ - namespace content (nested namespaces or packet definitions)
+	-->
+	<NSRoot>
+	<![CDATA[
+// namespace $ns$
+namespace $name$ {
+	$content$
+}
+]]>
+	</NSRoot>
+	
+	<!--
+		Nested namespace definition
+		Variables:
+			$ns$ - full namespace name
+			$name$ - namespace name
+			$content$ - namespace content (nested namespaces or packet definitions)
+	-->
+	<NSNext>
+	<![CDATA[
+	namespace $name$ {
+		$content$
+	}
+]]>
+	</NSNext>
+	
+	<!--
+		Packet definitions
+		Variables:
+			$ns$ - namespace
+			$name$ - packet name
+			$fields$ - fields format definition (see <Field><Format/></Field> definitions)
+			$serializer$ - serializer definition (see <Serializer/>)
+			$deserializer$ - deserializer definition (see <Deserializer/>)
+			$size$ - size definition (see <Size/>)
+			$ctor$ - constructor definition (if available for destination language)
+	-->
+	<Pack>
+	<![CDATA[
+		class $name$ : public IPacket {
+		public:
+			$fields$
+			$ctor$
+			$serializer$
+			$deserializer$
+			$size$
+		};
+]]>
+	</Pack>
+	
+	<!--
+		Packet constructor definition
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$fields$ - fields ctor definition (see <Field><Ctor/><Field> definition
+			$parent$ - parent packet name if available
+	-->
+	<Ctor>
+	<![CDATA[
+			$name$ () {
+				$fields$
+			}
+	]]>
+	</Ctor>
+	
+	<!--
+		Packet size definition
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$parent$ - parent packet name
+			$fields$ - field size definition summ (see <Pack><size/></Pack>)
+	-->
+	<Size>
+	<![CDATA[
+			unsigned int Size () const {
+				return 1 + $fields$;
+			}
+	]]>
+	</Size>
+		<!--
+		Packet serializer definition
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$parent$ - parent packet name
+			$fields$ - field serialize definitions (see <Pack><serializer/></Pack>)
+	-->
+	<Serializer>
+	<![CDATA[
+			// $ns$.$name$ packet serializer
+			Buffer *Serialize () {
+				Buffer *buffer = new Buffer(Size());
+				int offset = 0;
+				buffer->set($id$, offset++); 
+				$fields$
+				return buffer;
+			}
+	]]>
+	</Serializer>
+	
+	<!--
+		Packet deserializer definition
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$parent$ - parent packet name
+			$fields$ - field deserialize definitions (see <Pack><deserialize/></Pack>)
+	-->
+	<Deserializer>
+	<![CDATA[
+			IPacket *Deserialize(const Buffer &buffer) {
+				int offset = 0;
+				if ( buffer.getChar(offset++) == $id$ ) {
+					$fields$
+					return this;
+				} else {
+					return 0;
+				}
+			}
+	]]>
+	</Deserializer>
+	
+	<!--
+		Final namespace packet parser definition
+		Variables:
+			$ns$ - namespace
+			$fields$ - parser field definitions (see <FieldParserCase/>)
+	-->
+	<Parser>
+	<![CDATA[
+		static Deserialize : function (const Buffer &buffer) {
+			int type = buffer.readInt8(0);
+			switch(type) {
+					$fields$
+				default:
+					{
+						TStr err = TStr ("Unknown packet type: ") << type;
+						throw err.c_str();
+					}
+			}
+		}
+	]]>
+	</Parser>
+
+	<!--
+		Namespace packet parser case
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$parent$ - parent packet name
+	-->
+	<ParserCase>
+		<![CDATA[
+				case $id$:
+					{
+						$name$ pack = new $name$();
+						if (pack->Deserialize(buffer)) {
+							return pack;
+						} else {
+							delete pack;
+							return 0;
+						}
+					}
+		]]>
+	</ParserCase>
+	
+	<!--
+		Field definition
+		Attributes:
+			type - destination field type int, numeric, string, binary
+		Contains:
+			format - definition of field in packet
+			ctor - definition of field in ctor
+			serialize - definition of field serialization
+			deserialize - definition of field deserialization
+			parser - parser case definition
+			size - field size definition
+		Variables:
+			$ns$ - namespace
+			$pack$ - packet name
+			$id$ - packet id
+			$name$ - field name
+			$num$ - field number
+			$parent$ - parent packet name
+			$default$ - default value
+			$size$ - size definition
+	-->
+	<Field type="int">
+		<Format>
+		<![CDATA[
+			int $name$;
+		]]>
+		</Format>
+		<Ctor>
+		<![CDATA[
+			$name$ = $default$;
+		]]>
+		</Ctor>
+		<Serialize>
+		<![CDATA[
+				buffer.set($name$, offset+=4);
+		]]>
+		</Serialize>
+		<Deserialize>
+		<![CDATA[
+					buffer.get($name$, offset+=4);
+		]]>
+		</Deserialize>
+		<Size>4</Size>
+	</Field>
+	
+	<!--
+		String sample
+	-->
+	<Field type="string">
+		<Format>
+		<![CDATA[
+			TStr $name$;
+		]]>
+		</Format>
+		<Ctor>
+		<![CDATA[
+				$name$ = "$default$";
+		]]>
+		</Ctor>
+		<Serialize>
+		<![CDATA[
+				{
+					unsigned short slen = (unsigned short) $name$.Length();
+					buffer.set(slen, offset+=2);
+					buffer.set($name$.c_str(), offset+=slen);
+				}
+		]]>
+		</Serialize>
+		<Deserialize>
+		<![CDATA[
+					{
+						unsigned short slen = buffer.getShort(offset);
+						offset+=2;
+						$name$ = buffer.getString(offset, offset+slen);
+						offset+=slen;
+					}
+		]]>
+		</Deserialize>
+		<Size>$name$.Length() + 2</Size>
+	</Field>
+</snippets>
