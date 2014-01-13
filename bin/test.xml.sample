@@ -1,6 +1,6 @@
 ﻿<!-- test XML -->
 <namespace name="Bunker.Client">
-<!-- 
+<!--
 	No code will be generated for abstract packets
 	Also abstract packets do not need id attribute
 -->
@@ -8,26 +8,26 @@
   <field name="id" type="int" default="0"/>
   <field name="ver" type="int" default="1"/>
  </abstract>
- 
+
  <abstract name="Response">
   <field name="id" type="int"/>
  </abstract>
- 
+
  <!-- hello request -->
- <pack name="HelloRequst" extends="Request" id="1">
+ <pack name="HelloRequest" extends="Request" id="1">
   <field name="version" type="string" default="protoc 1.0"/>
  </pack>
- 
+
  <!-- OK and error responses -->
  <pack name="Ok" extends="Response" id="2">
   <field name="message" type="string"  default=""/>
  </pack>
- 
+
  <pack name="Error" extends="Response" id="3">
   <field name="code" type="int" default="0"/>
   <field name="message" type="string" default=""/>
  </pack>
- 
+
  <!-- pass through packet-->
  <pack name="PassTrough" extends="Request" id="4">
   <field name="from" type="string" default=""/>
