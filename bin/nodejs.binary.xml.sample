@@ -176,8 +176,7 @@ $ns$.$name$ = function() {
 		<![CDATA[
 $ns$.types = {};
 $fields$
-$ns$.decode = function (packet) {
-	var buffer = protoUtils.toBuffer(packet);
+$ns$.decode = function (buffer) {
 	var type = buffer.readInt8(0);
 	if (typeof $ns$.types[type] === 'undefined') {
 		throw Error('Unknown packet type: ' + type);
