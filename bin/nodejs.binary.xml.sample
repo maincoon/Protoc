@@ -267,7 +267,7 @@ $ns$.types[$id$] = $ns$.$name$;
 			offset+=slen;
 ]]>
 		</Deserialize>
-		<Size>Bunker.getUTF8Length(this.$name$) + 2</Size>
+		<Size>Buffer.byteLength(this.$name$, 'utf8') + 2</Size>
 		<Ctor/>
 	</Field>
 
