@@ -43,6 +43,11 @@
 	-->
 	<PackSeparator><![CDATA[,
 ]]></PackSeparator>
+
+	<!--
+		Namespace definition separator
+	-->
+	<NSSeparator>.</NSSeparator>
 	
 	<!--
 		Root namespace definition
@@ -59,13 +64,21 @@ var $name$ = {
 };
 ]]>
 	</NSRoot>
-	
+
 	<!--
 		Nested namespace definition
 		Variables:
 			$ns$ - full namespace name
 			$name$ - namespace name
+			$parent$ - parent namespace name
 			$content$ - namespace content (nested namespaces or packet definitions)
+			
+			For example you have namespace Some.Client.Test 
+			then when compiling last namespace level you'll have:
+			
+			$ns$ = Bunker.Client.Test
+			$name$ = Test
+			$parent$ = Bunker.Client
 	-->
 	<NSNext>
 	<![CDATA[

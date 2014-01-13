@@ -118,8 +118,10 @@ namespace Protoc {
 		std::string nsRoot;
 		std::string nsNext;
 		std::string packSeparator;
+		std::string nsSeparator;
 		std::string parser;
 
+		NamespaceDescriptor();
 		~NamespaceDescriptor();
 
 		// utilities
@@ -129,6 +131,7 @@ namespace Protoc {
 		std::string GetNameSpace() const;
 		void AddPacket(PacketDescriptor *pack);
 		std::string GetDefault(FieldDescriptor::FieldType type) const;
+		std::string GetNameSpacePartial( int depth );
 
 		// compile snippets
 		std::string CompileHeader() const;

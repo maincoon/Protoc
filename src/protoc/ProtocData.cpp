@@ -12,6 +12,11 @@ using namespace Protoc;
 // Namespace descriptor implementation
 // --------------------------------------------------------------------------
 
+NamespaceDescriptor::NamespaceDescriptor() {
+	// some defaults
+	nsSeparator = ".";
+}
+
 NamespaceDescriptor::~NamespaceDescriptor() {
 	// go cxx11 auto here
 	for ( std::map<std::string, PacketDescriptor*>::iterator it = nsPackets.begin(); it != nsPackets.end(); it ++ ) {
@@ -77,11 +82,13 @@ std::string NamespaceDescriptor::CompileNextNS(int num) {
 	if ( num < (int) nsNameParts.size()-1) {
 		std::string content = CompileNextNS(num+1);
 		std::string result = Utils::TemplateReplace(nsNext, "ns", nsName);
+		result = Utils::TemplateReplace(result, "parent", GetNameSpacePartial(num));
 		result = Utils::TemplateReplace(result, "name", nsNameParts[num]);
 		return Utils::TemplateReplace(result, "content", content);
 	} else {
 		std::string content = CompileContent();
 		std::string result = Utils::TemplateReplace(nsNext, "ns", nsName);
+		result = Utils::TemplateReplace(result, "parent", GetNameSpacePartial(num));
 		result = Utils::TemplateReplace(result, "name", nsNameParts[num]);
 		return Utils::TemplateReplace(result, "content", content);
 	}
@@ -146,6 +153,19 @@ std::string Protoc::NamespaceDescriptor::GetDefault( FieldDescriptor::FieldType 
 		return defaultBin;
 	default:
 		return "";
+	}
+}
+
+std::string NamespaceDescriptor::GetNameSpacePartial( int depth ) {
+	if ( depth >= 0  && depth < (int) nsNameParts.size()) {
+		std::string ret = nsNameParts[0];
+		for ( int a = 1; a < depth; a ++ ) {
+			ret += nsSeparator;
+			ret += nsNameParts[a];
+		}	
+		return ret;
+	} else {
+		return nsName;
 	}
 }
 
