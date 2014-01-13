@@ -1,0 +1,11 @@
+.idea
+.buildpath
+.project
+.settings/
+nbproject/
+webstat/
+bin/Protoc
+
+*.o
+.DS_Store
+
