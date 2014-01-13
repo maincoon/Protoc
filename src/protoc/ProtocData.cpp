@@ -79,19 +79,16 @@ std::string NamespaceDescriptor::CompileRootNS() {
 }
 
 std::string NamespaceDescriptor::CompileNextNS(int num) {
+	std::string content = "";
 	if ( num < (int) nsNameParts.size()-1) {
-		std::string content = CompileNextNS(num+1);
-		std::string result = Utils::TemplateReplace(nsNext, "ns", nsName);
-		result = Utils::TemplateReplace(result, "parent", GetNameSpacePartial(num));
-		result = Utils::TemplateReplace(result, "name", nsNameParts[num]);
-		return Utils::TemplateReplace(result, "content", content);
+		content = CompileNextNS(num+1);
 	} else {
-		std::string content = CompileContent();
-		std::string result = Utils::TemplateReplace(nsNext, "ns", nsName);
-		result = Utils::TemplateReplace(result, "parent", GetNameSpacePartial(num));
-		result = Utils::TemplateReplace(result, "name", nsNameParts[num]);
-		return Utils::TemplateReplace(result, "content", content);
+		content = CompileContent();
 	}
+	std::string result = Utils::TemplateReplace(nsNext, "ns", nsName);
+	result = Utils::TemplateReplace(result, "parent", GetNameSpacePartial(num));
+	result = Utils::TemplateReplace(result, "name", nsNameParts[num]);
+	return Utils::TemplateReplace(result, "content", content);
 }
 
 std::string NamespaceDescriptor::CompileParser() {
