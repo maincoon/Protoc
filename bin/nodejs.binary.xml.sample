@@ -49,6 +49,7 @@
 	<NSRoot>
 		<![CDATA[
 var $name$ = {};
+module.exports = $name$;
 $content$
 ]]>
 	</NSRoot>
