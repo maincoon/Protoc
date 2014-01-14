@@ -158,9 +158,8 @@ $ns$.$name$ = function() {
 			offset ++;
 			$fields$
 			return this;
-		} else {
-			return null;
 		}
+		return null;
 	};
 ]]>
 	</Deserializer>
@@ -173,15 +172,23 @@ $ns$.$name$ = function() {
 	-->
 	<Parser>
 		<![CDATA[
-$ns$.types = {};
+$ns$.__types = {};
 $fields$
-$ns$.decode = function (buffer) {
-	var type = buffer.readInt8(0);
-	if (typeof $ns$.types[type] === 'undefined') {
-		throw Error('Unknown packet type: ' + type);
+$ns$.__getBinarySize = function(data) {
+	if (null === data) {
+		return 0;
+	} else if ('string' == typeof data) {
+		return Buffer.byteLength(data, 'utf8');
+	} else if ('undefined' != typeof data.length) {
+		return data.length;
 	}
-	return new $ns$.types[type]().decode(buffer);
+	return 0;
 };
+$ns$.decode = function(buffer) {
+	var type = buffer.readInt8(0);
+	if ('undefined' == typeof $ns$.__types[type]) throw Error('Unknown packet type: ' + type);
+	return (new $ns$.__types[type]).decode(buffer);
+}
 ]]>
 	</Parser>
 
@@ -195,14 +202,14 @@ $ns$.decode = function (buffer) {
 	-->
 	<ParserCase>
 		<![CDATA[
-$ns$.types[$id$] = $ns$.$name$;
+$ns$.__types[$id$] = $ns$.$name$;
 ]]>
 	</ParserCase>
 
 	<!--
 		Field definition
 		Attributes:
-			type - destination field type 
+			type - destination field type int, numeric, string, binary
 		Contains:
 			format - definition of field in packet
 			ctor - definition of field in ctor
@@ -253,7 +260,11 @@ $ns$.types[$id$] = $ns$.$name$;
 		</Format>
 		<Serialize>
 			<![CDATA[
-		slen = buffer.write(this.$name$, offset+2);
+		if (null !== this.$name$) {
+			slen = buffer.write(this.$name$, offset+2);
+		} else {
+			slen = 0;
+		}
 		buffer.writeInt16LE(slen, offset);
 		offset += slen + 2;
 ]]>
@@ -266,7 +277,7 @@ $ns$.types[$id$] = $ns$.$name$;
 			offset+=slen;
 ]]>
 		</Deserialize>
-		<Size>Buffer.byteLength(this.$name$, 'utf8') + 2</Size>
+		<Size>2+$ns$.__getBinarySize(this.$name$)</Size>
 		<Ctor/>
 	</Field>
 
@@ -281,21 +292,25 @@ $ns$.types[$id$] = $ns$.$name$;
 		</Format>
 		<Serialize>
 			<![CDATA[
-		buffer.writeInt32LE($size$, offset);
-		offset += 2;
-		this.$name$.copy(buffer, offset);
-		offset += $size$;
+		slen = $ns$.__getBinarySize(this.$name$);
+		buffer.writeInt32LE(slen, offset);
+		offset += 4;
+		if (slen) {
+			this.$name$.copy(buffer, offset);
+			offset += slen;
+		}
 ]]>
 		</Serialize>
 		<Deserialize>
 			<![CDATA[
 			var blen = buffer.readInt32LE(offset);
-			offset +=2;
-			this.$name$ = buffer.slice(offset, blen);
-			offset += blen;
+			offset +=4;
+			if (blen) {
+				this.$name$ = buffer.slice(offset, blen);
+				offset += blen;
+			}
 ]]>
 		</Deserialize>
-		<Size>this.$name$.length</Size>
-		<Ctor/>
+		<Size>4+$ns$.__getBinarySize(this.$name$)</Size>
 	</Field>
 </snippets>
