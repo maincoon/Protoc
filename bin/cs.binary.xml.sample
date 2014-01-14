@@ -1,0 +1,347 @@
+﻿<snippets>
+	<!-- 
+		Added before content
+		Variables:
+			$ns$ - namespace
+	-->
+	<Header>
+<![CDATA[
+/**
+* Automatically generated file for $ns$
+*/
+using System.Text;
+using System.IO;
+
+/**
+* Packet interface must be added in separate file something like
+*	public interface IPacket {
+*		void Serialize(BinaryWriter writer);
+*		IPacket Deserialize(BinaryReader reader);
+*		int Size();
+*	}
+*/
+]]>
+	</Header>
+	
+	<!-- 
+		Added after content
+		Variables:
+			$ns$ - namespace
+	-->
+	<Footer>
+	<![CDATA[
+/**
+* End of generated file for $ns$
+*/
+]]>
+	</Footer>
+
+	<!-- 
+		Default values for each type 
+		If not specified default value is empty string
+	-->
+	<Default type="int">0</Default>
+	<Default type="string"></Default>
+	<Default type="binary">null</Default>
+	
+	<!--
+		Separates packet definitions.
+	-->
+	<PackSeparator/>
+
+	<!--
+		Root namespace definition
+		Variables:
+			$ns$ - full namespace name
+			$name$ - root namespace name
+			$content$ - namespace content (nested namespaces or packet definitions)
+	-->
+	<NSRoot>
+<![CDATA[
+// namespace $ns$
+namespace $name$ {
+	$content$
+}
+]]>
+	</NSRoot>
+	
+	<!--
+		Nested namespace definition
+		Variables:
+			$ns$ - full namespace name
+			$name$ - namespace name in current level
+			$content$ - namespace content (nested namespaces or packet definitions)
+			$parent$ - parent namespace in current level
+	-->
+	<NSNext>
+	<![CDATA[
+	namespace $name$ {
+		$content$
+	}
+]]>
+	</NSNext>
+	
+	<!--
+		Packet definitions
+		Variables:
+			$ns$ - namespace
+			$name$ - packet name
+			$id$ - packet id
+			$parent$ - parent packet name
+			$fields$ - fields format definition (see <Field><Format/></Field> definitions)
+			$serializer$ - serializer definition (see <Serializer/>)
+			$deserializer$ - deserializer definition (see <Deserializer/>)
+			$size$ - size definition (see <Size/>)
+			$ctor$ - constructor definition (if available for destination language)
+	
+	-->
+	<Pack>
+	<![CDATA[
+		public class $name$ : IPacket {
+			public const byte packId = $id$;
+		$fields$
+			$ctor$
+			$serializer$
+			$deserializer$
+			$size$
+		}
+]]>
+	</Pack>
+	
+	<!--
+		Packet constructor definition
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$fields$ - fields ctor definition (see <Field><Ctor/><Field> definition
+			$parent$ - parent packet name if available
+	-->
+	<Ctor>
+	<![CDATA[
+			public $name$ () {
+		$fields$
+			}
+	]]>
+	</Ctor>
+	
+	<!--
+		Packet size definition
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$parent$ - parent packet name
+			$fields$ - field size definition summ (see <Pack><size/></Pack>)
+	-->
+	<Size>
+	<![CDATA[
+			public int Size () {
+				return 1 + $fields$;
+			}
+	]]>
+	</Size>
+		<!--
+		Packet serializer definition
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$parent$ - parent packet name
+			$fields$ - field serialize definitions (see <Field><Serializer/></Field>)
+	-->
+	<Serializer>
+	<![CDATA[
+			// $ns$.$name$ packet serializer
+			public void Serialize (BinaryWriter writer) {
+				writer.Write(packId);
+		$fields$
+			}
+	]]>
+	</Serializer>
+	
+	<!--
+		Packet deserializer definition
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$parent$ - parent packet name
+			$fields$ - field deserialize definitions (see <Field><Dreserialize/></Field>)
+	-->
+	<Deserializer>
+	<![CDATA[
+			public IPacket Deserialize(BinaryReader reader) {
+				if ( reader.ReadByte() == $id$ ) {
+		$fields$
+					return this;
+				} else {
+					return null;
+				}
+			}
+	]]>
+	</Deserializer>
+	
+	<!--
+		Final namespace packet parser definition
+		Variables:
+			$ns$ - namespace
+			$fields$ - parser field definitions (see <FieldParserCase/>)
+	-->
+	<Parser>
+	<![CDATA[
+		public class Deserializer {
+			public static IPacket Deserialize (BinaryReader reader) {
+				byte type = reader.ReadByte();
+				reader.BaseStream.Seek(0, SeekOrigin.Begin);
+				switch(type) {
+						$fields$
+					default:
+						return null;
+				}
+			}
+		}
+	]]>
+	</Parser>
+
+	<!--
+		Namespace packet parser case
+		Variables:
+			$ns$ - namespace
+			$id$ - packet id
+			$name$ - packet name
+			$parent$ - parent packet name
+	-->
+	<ParserCase>
+		<![CDATA[
+				case $id$:
+					{
+						$name$ pack = new $name$();
+						return pack.Deserialize(reader);
+					}
+		]]>
+	</ParserCase>
+	
+	<!--
+		Field definition
+		Attributes:
+			type - destination field type
+		Contains:
+			format - definition of field in packet
+			ctor - definition of field in ctor
+			serialize - definition of field serialization
+			deserialize - definition of field deserialization
+			parser - parser case definition
+			size - field size definition
+		Variables:
+			$ns$ - namespace
+			$pack$ - packet name
+			$id$ - packet id
+			$name$ - field name
+			$num$ - field number
+			$parent$ - parent packet name
+			$default$ - default value
+			$size$ - size definition
+			$type$ - field type
+	-->
+	<Field type="int">
+		<Format>
+		<![CDATA[	public int $name$;
+		]]>
+		</Format>
+		<Ctor>
+		<![CDATA[		$name$ = $default$;
+		]]>
+		</Ctor>
+		<Serialize>
+		<![CDATA[		// $type$ '$name$' serialize
+				writer.Write($name$);
+		]]>
+		</Serialize>
+		<Deserialize>
+		<![CDATA[			// $type$ '$name$' deserialize
+					$name$ = reader.ReadInt32();
+		]]>
+		</Deserialize>
+		<Size>4</Size>
+	</Field>
+	
+	<!--
+		String sample
+	-->
+	<Field type="string">
+		<Format>
+		<![CDATA[	public string $name$;
+			public int $name$_size {
+				get {
+					if ( $name$.Length > 0 ) {
+						return Encoding.UTF8.GetByteCount($name$)+2;
+					} else {
+						return 2;
+					}
+				}
+			}
+		]]>
+		</Format>
+		<Ctor>
+		<![CDATA[		$name$ = "$default$";
+		]]>
+		</Ctor>
+		<Serialize>
+		<![CDATA[		// $type$ '$name$' serialize
+				if ($name$_size > 2 ) {
+					writer.Write((ushort)($name$_size - 2));
+					writer.Write(Encoding.UTF8.GetBytes ($name$));
+				} else {
+					writer.Write((ushort)0);
+				}
+		]]>
+		</Serialize>
+		<Deserialize>
+		<![CDATA[			// $type$ '$name$' deserialize
+					$name$ = Encoding.UTF8.GetString(reader.ReadBytes(reader.ReadUInt16()));
+		]]>
+		</Deserialize>
+		<Size>$name$_size</Size>
+	</Field>
+
+	
+	<!--
+		String sample
+	-->
+	<Field type="binary">
+		<Format>
+		<![CDATA[	public byte[] $name$;
+			public int $name$_size {
+				get {
+					if ( $name$ != null ) {
+						return $name$.Length + 2;
+					} else {
+						return 2;
+					}
+				}
+			}
+		]]>
+		</Format>
+		<Ctor>
+		<![CDATA[		$name$ = null;
+		]]>
+		</Ctor>
+		<Serialize>
+		<![CDATA[		// $type$ '$name$' serialize
+				if ($size$ > 2 ) {
+					writer.Write($name$.Length);
+					writer.Write($name$);
+				} else {
+					writer.Write((int) 0);
+				}
+		]]>
+		</Serialize>
+		<Deserialize>
+		<![CDATA[			// $type$ '$name$' deserialize
+					$name$ = reader.ReadBytes(reader.ReadUInt16());
+		]]>
+		</Deserialize>
+		<Size>$name$_size</Size>
+	</Field>
+</snippets>

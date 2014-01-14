@@ -17,8 +17,14 @@ namespace Protoc {
 	public:
 		// type data
 		std::string typeName;
+		bool isImplemented;
 		// snippet data
 		std::string typeDefault;
+
+		// Default constructor
+		FieldTypeDescriptor() {
+			isImplemented = false;
+		}
 	};
 
 	// Packet field descriptor
@@ -56,10 +62,10 @@ namespace Protoc {
 
 	// Packet descriptor
 	class PacketDescriptor {
-	private:
-		// packet fields
-		std::map <std::string, FieldDescriptor*> packFields;
 	public:
+		// packet fields
+		std::vector <FieldDescriptor*> packFields;
+
 		// snippets data
 		std::string pack;
 		std::string ctor;
@@ -110,7 +116,7 @@ namespace Protoc {
 
 		// namespace data
 		std::vector <std::string> nsNameParts;
-		std::map <std::string, PacketDescriptor*> nsPackets;
+		std::vector <PacketDescriptor*> nsPackets;
 		std::map <std::string, FieldTypeDescriptor*> nsTypes;
 		std::string nsName;
 

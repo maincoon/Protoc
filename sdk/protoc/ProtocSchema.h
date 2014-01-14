@@ -16,6 +16,7 @@ namespace Protoc {
 	public:
 		ProtocSchema(NamespaceDescriptor*ns);
 		bool ReadSchema (const char *filename);
+		bool CheckIntegrity () const;
 	};
 }
 

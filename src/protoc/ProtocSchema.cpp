@@ -12,6 +12,17 @@ using namespace Protoc;
 ProtocSchema::ProtocSchema(NamespaceDescriptor*ns) {
 	rootNs = ns;
 }
+bool ProtocSchema::CheckIntegrity () const {
+	// check all types has fields implementation
+	for ( std::map<std::string, FieldTypeDescriptor*>::iterator it = rootNs->nsTypes.begin(); it != rootNs->nsTypes.end(); it ++ ) {
+		if (it->second->isImplemented == false) {
+			TLog::logErr("No Field node implemented for type='%s'!\n", it->second->typeName.c_str());
+			return false;
+		}
+	}
+	// all seems to be ok
+	return true;
+}
 
 bool ProtocSchema::ReadSchema( const char *file) {
 	std::string xml = "";

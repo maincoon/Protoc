@@ -152,9 +152,8 @@ bool ProtocFormatter::ParseRoot( const TXMLNode &node ) {
 
 bool ProtocFormatter::ParsePacketSnippet( const std::string &snippet ) {
 	if ( rootNs->nsPackets.size()) {
-		// go cxx11 auto here
-		for ( std::map<std::string, PacketDescriptor*>::iterator it = rootNs->nsPackets.begin(); it != rootNs->nsPackets.end(); it ++ ) {
-			it->second->pack = snippet;
+		for ( size_t a = 0; a < rootNs->nsPackets.size(); a ++ ) {
+			rootNs->nsPackets[a]->pack = snippet;
 		}
 		return true;
 	} else {
@@ -165,9 +164,8 @@ bool ProtocFormatter::ParsePacketSnippet( const std::string &snippet ) {
 
 bool ProtocFormatter::ParsePacketCtor( const std::string &snippet ) {
 	if ( rootNs->nsPackets.size()) {
-		// go cxx11 auto here
-		for ( std::map<std::string, PacketDescriptor*>::iterator it = rootNs->nsPackets.begin(); it != rootNs->nsPackets.end(); it ++ ) {
-			it->second->ctor = snippet;
+		for ( size_t a = 0; a < rootNs->nsPackets.size(); a ++ ) {
+			rootNs->nsPackets[a]->ctor = snippet;
 		}
 		return true;
 	} else {
@@ -178,9 +176,9 @@ bool ProtocFormatter::ParsePacketCtor( const std::string &snippet ) {
 
 bool ProtocFormatter::ParsePacketField( const TXMLNode &node ) {
 	if ( rootNs->nsPackets.size()) {
-		// go cxx11 auto here
-		for ( std::map<std::string, PacketDescriptor*>::iterator it = rootNs->nsPackets.begin(); it != rootNs->nsPackets.end(); it ++ ) {
-			PacketDescriptor *pack = it->second;
+		// set field for all 
+		for ( size_t a = 0; a < rootNs->nsPackets.size(); a ++ ) {
+			PacketDescriptor *pack = rootNs->nsPackets[a];
 			if (pack->ParsePacketField(node)) {
 				continue;
 			} else {
@@ -197,9 +195,8 @@ bool ProtocFormatter::ParsePacketField( const TXMLNode &node ) {
 
 bool ProtocFormatter::ParsePackeSize( const std::string &snippet ) {
 	if ( rootNs->nsPackets.size()) {
-		// go cxx11 auto here
-		for ( std::map<std::string, PacketDescriptor*>::iterator it = rootNs->nsPackets.begin(); it != rootNs->nsPackets.end(); it ++ ) {
-			it->second->size = snippet;
+		for ( size_t a = 0; a < rootNs->nsPackets.size(); a ++ ) {
+			rootNs->nsPackets[a]->size = snippet;
 		}
 		return true;
 	} else {
@@ -210,9 +207,8 @@ bool ProtocFormatter::ParsePackeSize( const std::string &snippet ) {
 
 bool ProtocFormatter::ParsePackeSerializer( const std::string &snippet ) {
 	if ( rootNs->nsPackets.size()) {
-		// go cxx11 auto here
-		for ( std::map<std::string, PacketDescriptor*>::iterator it = rootNs->nsPackets.begin(); it != rootNs->nsPackets.end(); it ++ ) {
-			it->second->serializer = snippet;
+		for ( size_t a = 0; a < rootNs->nsPackets.size(); a ++ ) {
+			rootNs->nsPackets[a]->serializer = snippet;
 		}
 		return true;
 	} else {
@@ -223,9 +219,8 @@ bool ProtocFormatter::ParsePackeSerializer( const std::string &snippet ) {
 
 bool ProtocFormatter::ParsePackeDeserializer( const std::string &snippet ) {
 	if ( rootNs->nsPackets.size()) {
-		// go cxx11 auto here
-		for ( std::map<std::string, PacketDescriptor*>::iterator it = rootNs->nsPackets.begin(); it != rootNs->nsPackets.end(); it ++ ) {
-			it->second->deserializer = snippet;
+		for ( size_t a = 0; a < rootNs->nsPackets.size(); a ++ ) {
+			rootNs->nsPackets[a]->deserializer = snippet;
 		}
 		return true;
 	} else {
@@ -236,9 +231,8 @@ bool ProtocFormatter::ParsePackeDeserializer( const std::string &snippet ) {
 
 bool ProtocFormatter::ParseParserCase( const std::string &snippet ) {
 	if ( rootNs->nsPackets.size()) {
-		// go cxx11 auto here
-		for ( std::map<std::string, PacketDescriptor*>::iterator it = rootNs->nsPackets.begin(); it != rootNs->nsPackets.end(); it ++ ) {
-			it->second->parserCase = snippet;
+		for ( size_t a = 0; a < rootNs->nsPackets.size(); a ++ ) {
+			rootNs->nsPackets[a]->parserCase = snippet;
 		}
 		return true;
 	} else {

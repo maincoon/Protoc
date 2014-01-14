@@ -18,9 +18,8 @@ NamespaceDescriptor::NamespaceDescriptor() {
 }
 
 NamespaceDescriptor::~NamespaceDescriptor() {
-	// go cxx11 auto here
-	for ( std::map<std::string, PacketDescriptor*>::iterator it = nsPackets.begin(); it != nsPackets.end(); it ++ ) {
-		delete it->second;
+	for ( size_t a = 0; a < nsPackets.size(); a++ ) {
+		delete nsPackets[a];
 	}
 	for ( std::map<std::string, FieldTypeDescriptor*>::iterator it = nsTypes.begin(); it != nsTypes.end(); it ++ ) {
 		delete it->second;
@@ -28,22 +27,22 @@ NamespaceDescriptor::~NamespaceDescriptor() {
 }
 
 PacketDescriptor * NamespaceDescriptor::FindPacketByName( const std::string &name ) const {
-	// go cxx11 auto here
-	std::map<std::string, PacketDescriptor*>::const_iterator it = nsPackets.find(name);
-	if ( it != nsPackets.end()) {
-		return it->second;
-	} else {
-		return 0;
+	for ( size_t a = 0; a < nsPackets.size(); a++ ) {
+		if ( nsPackets[a]->packName == name ) {
+			return nsPackets[a];
+		}	
 	}
+	// not found	
+	return 0;
 }
 
 PacketDescriptor * NamespaceDescriptor::FindPacketNyId( int id ) const {
-	// go cxx11 auto here
-	for ( std::map<std::string, PacketDescriptor*>::const_iterator it = nsPackets.begin(); it != nsPackets.end(); it ++ ) {
-		if ( it->second->packId == id ) {
-			return it->second;
-		}
+	for ( size_t a = 0; a < nsPackets.size(); a++ ) {
+		if ( nsPackets[a]->packId == id ) {
+			return nsPackets[a];
+		}	
 	}
+	// not found	
 	return 0;
 }
 
@@ -102,10 +101,9 @@ std::string NamespaceDescriptor::CompileParser() {
 
 std::string NamespaceDescriptor::CompileParserCases() {
 	std::string content = "";
-	// go cxx11 auto here
-	for ( std::map<std::string, PacketDescriptor*>::iterator it = nsPackets.begin(); it != nsPackets.end(); it ++ ) {
-		if ( it->second->isAbstract == false ) {
-			content += it->second->CompileParserCase(*this);
+	for ( size_t a = 0; a < nsPackets.size(); a ++ ) {
+		if ( nsPackets[a]->isAbstract  == false) {
+			content += nsPackets[a]->CompileParserCase(*this);
 		}
 	}
 	return content;
@@ -126,10 +124,9 @@ std::string NamespaceDescriptor::CompileContent() {
 
 std::string NamespaceDescriptor::CompilePackets() {
 	std::string content = "";
-	// go cxx11 auto here
-	for ( std::map<std::string, PacketDescriptor*>::iterator it = nsPackets.begin(); it != nsPackets.end(); it ++ ) {
-		if ( it->second->isAbstract == false ) {
-			content += it->second->Compile(*this);
+	for ( size_t a = 0; a < nsPackets.size(); a ++ ) {
+		if ( nsPackets[a]->isAbstract  == false) {
+			content += nsPackets[a]->Compile(*this);
 			content += packSeparator;
 		}
 	}
@@ -137,7 +134,7 @@ std::string NamespaceDescriptor::CompilePackets() {
 }
 
 void NamespaceDescriptor::AddPacket( PacketDescriptor *pack ) {
-	nsPackets[pack->packName] = pack;
+	nsPackets.push_back(pack);
 }
 
 void NamespaceDescriptor::AddType( FieldTypeDescriptor* fType ) {
@@ -145,13 +142,12 @@ void NamespaceDescriptor::AddType( FieldTypeDescriptor* fType ) {
 }
 
 
-std::string Protoc::NamespaceDescriptor::GetDefault(const std::string &name) const {
-	// go cxx11 auto here
+std::string NamespaceDescriptor::GetDefault(const std::string &name) const {
 	std::map <std::string, FieldTypeDescriptor*>::const_iterator it = nsTypes.find(name);
 	if ( it != nsTypes.end()) {
 		return it->second->typeDefault;
 	} else {
-		return 0;
+		return "";
 	}
 }
 
@@ -191,19 +187,18 @@ PacketDescriptor::PacketDescriptor(NamespaceDescriptor *ns) {
 }
 
 PacketDescriptor::~PacketDescriptor() {
-	// go cxx11 auto here
-	for ( std::map<std::string, FieldDescriptor*>::iterator it = packFields.begin(); it != packFields.end(); it ++ ) {
-		delete it->second;
+	for ( size_t a = 0; a < packFields.size(); a ++ ) {
+		delete packFields[a];
 	}
 }
 
 FieldDescriptor * PacketDescriptor::FindFieldByName( const std::string &name ) {
-	std::map<std::string, FieldDescriptor*>::iterator it = packFields.find(name);
-	if (it != packFields.end()) {
-		return it->second;
-	} else {
-		return 0;
+	for ( size_t a = 0; a < packFields.size(); a ++ ) {
+		if ( packFields[a]->fieldName == name ) {
+			return packFields[a];
+		}
 	}
+	return 0;
 }
 
 std::string PacketDescriptor::Compile( const NamespaceDescriptor &ns ) {
@@ -255,20 +250,16 @@ std::string PacketDescriptor::CompileSize( const NamespaceDescriptor &ns ) {
 
 std::string PacketDescriptor::CompileSerializerFields( const NamespaceDescriptor &ns ) {
 	std::string content = "";
-	int cnt = 0;
-	// go cxx11 auto here
-	for ( std::map<std::string, FieldDescriptor*>::iterator it = packFields.begin(); it != packFields.end(); it ++ ) {
-		content += it->second->CompileSerialize(ns, cnt++);
+	for ( size_t a = 0; a < packFields.size(); a ++ ) {
+		content += packFields[a]->CompileSerialize(ns, a);
 	}
 	return content;
 }
 
 std::string PacketDescriptor::CompileDeserializerFields( const NamespaceDescriptor &ns ) {
 	std::string content = "";
-	int cnt = 0;
-	// go cxx11 auto here
-	for ( std::map<std::string, FieldDescriptor*>::iterator it = packFields.begin(); it != packFields.end(); it ++ ) {
-		content += it->second->CompileDeserialize(ns, cnt++);
+	for ( size_t a = 0; a < packFields.size(); a ++ ) {
+		content += packFields[a]->CompileDeserialize(ns, a);
 	}
 	return content;
 }
@@ -311,11 +302,9 @@ std::string PacketDescriptor::CompileFields( const NamespaceDescriptor &ns ) {
 	if ( packParent ) {
 		content += packParent->CompileFields(ns);
 	}
-	int cnt = 0;
 	// compile my fields
-	// go cxx11 auto here
-	for ( std::map<std::string, FieldDescriptor*>::iterator it = packFields.begin(); it != packFields.end(); it ++ ) {
-		content += it->second->CompileFormat(ns, cnt++);
+	for ( size_t a = 0; a < packFields.size(); a ++) {
+		content += packFields[a]->CompileFormat(ns, a);
 	}
 	return content;
 }
@@ -334,10 +323,8 @@ std::string PacketDescriptor::CompileCtorFields( const NamespaceDescriptor &ns )
 	if ( packParent ) {
 		content += packParent->CompileCtorFields(ns);
 	}
-	int cnt = 0;
-	// go cxx11 auto here
-	for ( std::map<std::string, FieldDescriptor*>::iterator it = packFields.begin(); it != packFields.end(); it ++ ) {
-		content += it->second->CompileCtor(ns, cnt++);
+	for ( size_t a = 0; a < packFields.size(); a ++) {
+		content += packFields[a]->CompileCtor(ns, a);
 	}
 	return content;
 }
@@ -352,16 +339,15 @@ std::string PacketDescriptor::CompileSizeFields( const NamespaceDescriptor &ns )
 			content += "+";
 		}
 	}
-	size_t cnt = 0;
-	// go cxx11 auto here
-	for ( std::map<std::string, FieldDescriptor*>::iterator it = packFields.begin(); it != packFields.end(); it ++, cnt ++ ) {
-		std::string sz = it->second->CompileSize(ns, cnt);
+	for ( size_t a = 0; a < packFields.size(); a ++) {
+		std::string sz = packFields[a]->CompileSize(ns, a);
 		if  (sz.length()) {
 			content += sz;
-			if ( cnt < packFields.size() - 1 ) {
+			if ( a < packFields.size() - 1 ) {
 				content += "+";
 			}
 		}
+
 	}
 	return content;
 }
@@ -371,9 +357,9 @@ bool PacketDescriptor::ParsePacketField( const TXMLNode &node ) {
 	std::string sType = node.getAttrib("type");
 	FieldTypeDescriptor *fType = nameSpace->TypeByName(sType);
 	if ( fType != 0 ) {
-		// go cxx11 auto here
-		for ( std::map<std::string, FieldDescriptor*>::iterator it = packFields.begin(); it != packFields.end(); it ++ ) {
-			FieldDescriptor *field = it->second;
+		fType->isImplemented = true;
+		for ( size_t a = 0; a < packFields.size(); a ++) {
+			FieldDescriptor *field = packFields[a];
 			if ( field->fieldType == fType ) {
 				if (field->ParseField(node)) {
 					continue;
@@ -392,7 +378,7 @@ bool PacketDescriptor::ParsePacketField( const TXMLNode &node ) {
 }
 
 void PacketDescriptor::AddField( FieldDescriptor* field ) {
-	packFields[field->fieldName] = field;
+	packFields.push_back(field);
 }
 
 // --------------------------------------------------------------------------
@@ -405,6 +391,7 @@ std::string FieldDescriptor::CompileFragment( const NamespaceDescriptor &ns, con
 	content = Utils::TemplateReplace(content, "id", Utils::ToString(pack->packId));
 	content = Utils::TemplateReplace(content, "name", fieldName);
 	content = Utils::TemplateReplace(content, "num", Utils::ToString(num));
+	content = Utils::TemplateReplace(content, "type", fieldType->typeName);
 	content = Utils::TemplateReplace(content, "parent", pack->GetParentPackName());
 	content = Utils::TemplateReplace(content, "default", GetDefault(ns));
 	return Utils::TemplateReplace(content, "size", CompileSize(ns, num));
