@@ -250,22 +250,12 @@ bool ProtocFormatter::ParseParserCase( const std::string &snippet ) {
 bool ProtocFormatter::ParseDefault( const TXMLNode &node ) {
 	std::string sType = node.getAttrib("type");
 	std::string val = node.getData();
-	FieldDescriptor::FieldType fType = Utils::TypeByName(sType);
-	switch (fType) {
-	case FieldDescriptor::Int:
-		rootNs->defaultInt = val;
+	FieldTypeDescriptor *fType = rootNs->TypeByName(sType);
+	if ( fType != 0) {
+		fType->typeDefault = val;
 		return true;
-	case FieldDescriptor::Numeric:
-		rootNs->defaultNum = val;
-		return true;
-	case FieldDescriptor::Binary:
-		rootNs->defaultBin = val;
-		return true;
-	case FieldDescriptor::String:
-		rootNs->defaultStr = val;
-		return true;
-	default:
-		TLog::logErr("Unknown type in Default node '%s'\n", sType.c_str());
+	} else {
+		TLog::logErr("Unknown type '%s' in Default node '%s'\n", sType.c_str(), node.toXML().c_str());
 		return false;
 	}
 }

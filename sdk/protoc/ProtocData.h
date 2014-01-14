@@ -12,23 +12,23 @@ namespace Protoc {
 	class NamespaceDescriptor;
 	class PacketDescriptor;
 
+	// packet field type descriptor
+	class FieldTypeDescriptor {
+	public:
+		// type data
+		std::string typeName;
+		// snippet data
+		std::string typeDefault;
+	};
+
 	// Packet field descriptor
 	class FieldDescriptor {
 	private:
 		// field parent
 		PacketDescriptor *pack;
 	public:
-		// field types
-		enum FieldType {
-			None,
-			Int,
-			Numeric,
-			String,
-			Binary
-		};
-
 		// field data
-		FieldType fieldType;
+		FieldTypeDescriptor *fieldType;
 		std::string fieldName;
 		std::string fieldDefault;
 
@@ -73,8 +73,9 @@ namespace Protoc {
 		int packId;
 		std::string packName;
 		PacketDescriptor *packParent;
+		NamespaceDescriptor *nameSpace;
 
-		PacketDescriptor();
+		PacketDescriptor(NamespaceDescriptor *ns);
 		~PacketDescriptor();
 
 		// utilities
@@ -110,6 +111,7 @@ namespace Protoc {
 		// namespace data
 		std::vector <std::string> nsNameParts;
 		std::map <std::string, PacketDescriptor*> nsPackets;
+		std::map <std::string, FieldTypeDescriptor*> nsTypes;
 		std::string nsName;
 
 		// snippets data
@@ -125,12 +127,15 @@ namespace Protoc {
 		~NamespaceDescriptor();
 
 		// utilities
-		PacketDescriptor *FindPacketByName ( const std::string &name);
-		PacketDescriptor *FindPacketNyId (int id);
+		PacketDescriptor *FindPacketByName ( const std::string &name) const;
+		PacketDescriptor *FindPacketNyId (int id) const;
+		FieldTypeDescriptor* TypeByName ( const std::string &sType ) const;
+
 		void SetNamespace( const std::string &ns );
 		std::string GetNameSpace() const;
 		void AddPacket(PacketDescriptor *pack);
-		std::string GetDefault(FieldDescriptor::FieldType type) const;
+		void AddType ( FieldTypeDescriptor* fType );
+		std::string GetDefault(const std::string &name) const;
 		std::string GetNameSpacePartial( int depth );
 
 		// compile snippets

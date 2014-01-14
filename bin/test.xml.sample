@@ -1,37 +1,45 @@
 ﻿<!-- test XML -->
 <namespace name="Bunker.Client">
 <!--
+	Just name any type you want
+-->
+  <types>
+	<type name="int"/>
+	<type name="string"/>
+	<type name="binary"/>
+  </types>
+<!-- 
 	No code will be generated for abstract packets
 	Also abstract packets do not need id attribute
 -->
  <abstract name="Request">
-  <field name="id" type="int" default="0"/>
-  <field name="ver" type="int" default="1"/>
+  <field name="id" type="int"/>
+  <field name="ver" type="int"/>
  </abstract>
-
+ 
  <abstract name="Response">
   <field name="id" type="int"/>
  </abstract>
-
+ 
  <!-- hello request -->
- <pack name="HelloRequest" extends="Request" id="1">
-  <field name="version" type="string" default="protoc 1.0"/>
+ <pack name="HelloRequst" extends="Request" id="1">
+  <field name="version" type="string"/>
  </pack>
-
+ 
  <!-- OK and error responses -->
  <pack name="Ok" extends="Response" id="2">
-  <field name="message" type="string"  default=""/>
+  <field name="message" type="string"/>
  </pack>
-
+ 
  <pack name="Error" extends="Response" id="3">
-  <field name="code" type="int" default="0"/>
-  <field name="message" type="string" default=""/>
+  <field name="code" type="int"/>
+  <field name="message" type="string"/>
  </pack>
-
+ 
  <!-- pass through packet-->
  <pack name="PassTrough" extends="Request" id="4">
-  <field name="from" type="string" default=""/>
-  <field name="to" type="string" default=""/>
-  <field name="content" type="binary" default=""/>
+  <field name="from" type="string"/>
+  <field name="to" type="string"/>
+  <field name="content" type="binary"/>
  </pack>
 </namespace>

@@ -32,7 +32,6 @@
 	<Default type="int">0</Default>
 	<Default type="string"></Default>
 	<Default type="binary">null</Default>
-	<Default type="numeric">0.0</Default>
 
 	<!--
 		Separates packet definitions.
@@ -203,7 +202,7 @@ $ns$.types[$id$] = $ns$.$name$;
 	<!--
 		Field definition
 		Attributes:
-			type - destination field type int, numeric, string, binary
+			type - destination field type 
 		Contains:
 			format - definition of field in packet
 			ctor - definition of field in ctor

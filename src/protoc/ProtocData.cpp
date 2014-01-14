@@ -22,11 +22,14 @@ NamespaceDescriptor::~NamespaceDescriptor() {
 	for ( std::map<std::string, PacketDescriptor*>::iterator it = nsPackets.begin(); it != nsPackets.end(); it ++ ) {
 		delete it->second;
 	}
+	for ( std::map<std::string, FieldTypeDescriptor*>::iterator it = nsTypes.begin(); it != nsTypes.end(); it ++ ) {
+		delete it->second;
+	}
 }
 
-PacketDescriptor * NamespaceDescriptor::FindPacketByName( const std::string &name ) {
+PacketDescriptor * NamespaceDescriptor::FindPacketByName( const std::string &name ) const {
 	// go cxx11 auto here
-	std::map<std::string, PacketDescriptor*>::iterator it = nsPackets.find(name);
+	std::map<std::string, PacketDescriptor*>::const_iterator it = nsPackets.find(name);
 	if ( it != nsPackets.end()) {
 		return it->second;
 	} else {
@@ -34,9 +37,9 @@ PacketDescriptor * NamespaceDescriptor::FindPacketByName( const std::string &nam
 	}
 }
 
-PacketDescriptor * NamespaceDescriptor::FindPacketNyId( int id ) {
+PacketDescriptor * NamespaceDescriptor::FindPacketNyId( int id ) const {
 	// go cxx11 auto here
-	for ( std::map<std::string, PacketDescriptor*>::iterator it = nsPackets.begin(); it != nsPackets.end(); it ++ ) {
+	for ( std::map<std::string, PacketDescriptor*>::const_iterator it = nsPackets.begin(); it != nsPackets.end(); it ++ ) {
 		if ( it->second->packId == id ) {
 			return it->second;
 		}
@@ -137,20 +140,30 @@ void NamespaceDescriptor::AddPacket( PacketDescriptor *pack ) {
 	nsPackets[pack->packName] = pack;
 }
 
-std::string Protoc::NamespaceDescriptor::GetDefault( FieldDescriptor::FieldType type ) const {
-	switch (type)
-	{
-	case Protoc::FieldDescriptor::Int:
-		return defaultInt;
-	case Protoc::FieldDescriptor::Numeric:
-		return defaultNum;
-	case Protoc::FieldDescriptor::String:
-		return defaultStr;
-	case Protoc::FieldDescriptor::Binary:
-		return defaultBin;
-	default:
-		return "";
+void NamespaceDescriptor::AddType( FieldTypeDescriptor* fType ) {
+	nsTypes[fType->typeName] = fType;
+}
+
+
+std::string Protoc::NamespaceDescriptor::GetDefault(const std::string &name) const {
+	// go cxx11 auto here
+	std::map <std::string, FieldTypeDescriptor*>::const_iterator it = nsTypes.find(name);
+	if ( it != nsTypes.end()) {
+		return it->second->typeDefault;
+	} else {
+		return 0;
 	}
+}
+
+FieldTypeDescriptor* NamespaceDescriptor::TypeByName( const std::string &name ) const {
+	// go cxx11 auto here
+	std::map <std::string, FieldTypeDescriptor*>::const_iterator it = nsTypes.find(name);
+	if ( it != nsTypes.end()) {
+		return it->second;
+	} else {
+		return 0;
+	}
+
 }
 
 std::string NamespaceDescriptor::GetNameSpacePartial( int depth ) {
@@ -170,8 +183,9 @@ std::string NamespaceDescriptor::GetNameSpacePartial( int depth ) {
 // Packet descriptor implementation
 // --------------------------------------------------------------------------
 
-PacketDescriptor::PacketDescriptor() {
+PacketDescriptor::PacketDescriptor(NamespaceDescriptor *ns) {
 	packParent = 0;
+	nameSpace = ns;
 	isAbstract = false;
 	packId = 0;
 }
@@ -355,8 +369,8 @@ std::string PacketDescriptor::CompileSizeFields( const NamespaceDescriptor &ns )
 bool PacketDescriptor::ParsePacketField( const TXMLNode &node ) {
 	// getting type
 	std::string sType = node.getAttrib("type");
-	FieldDescriptor::FieldType fType = Utils::TypeByName(sType);
-	if ( fType != FieldDescriptor::None ) {
+	FieldTypeDescriptor *fType = nameSpace->TypeByName(sType);
+	if ( fType != 0 ) {
 		// go cxx11 auto here
 		for ( std::map<std::string, FieldDescriptor*>::iterator it = packFields.begin(); it != packFields.end(); it ++ ) {
 			FieldDescriptor *field = it->second;
@@ -372,7 +386,7 @@ bool PacketDescriptor::ParsePacketField( const TXMLNode &node ) {
 		// all ok
 		return true;
 	} else {
-		TLog::logErr("Unknown field type '%s' in snippet Field definition.\n", sType.c_str());
+		TLog::logErr("Unknown field type '%s' in snippet Field definition'%s'.\n", sType.c_str(), node.toXML().c_str());
 		return false;
 	}
 }
@@ -380,7 +394,6 @@ bool PacketDescriptor::ParsePacketField( const TXMLNode &node ) {
 void PacketDescriptor::AddField( FieldDescriptor* field ) {
 	packFields[field->fieldName] = field;
 }
-
 
 // --------------------------------------------------------------------------
 // Field descriptor implementation
@@ -465,12 +478,13 @@ bool FieldDescriptor::ParseField( const TXMLNode &node ) {
 
 FieldDescriptor::FieldDescriptor( PacketDescriptor *pd ) {
 	pack = pd;
+	fieldType = 0;
 }
 
-std::string FieldDescriptor::GetDefault(const NamespaceDescriptor &ns) const {
+std::string FieldDescriptor::GetDefault( const NamespaceDescriptor &ns) const {
 	if ( fieldDefault.length()) {
 		return fieldDefault;
 	} else {
-		return ns.GetDefault(fieldType);
+		return ns.GetDefault(fieldType->typeName);
 	}
 }

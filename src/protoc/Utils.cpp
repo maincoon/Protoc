@@ -22,20 +22,6 @@ bool Utils::ReadFIle( const char *name, std::string &result ) {
 	}
 }
 
-FieldDescriptor::FieldType Protoc::Utils::TypeByName( const std::string &sType ) {
-	if ( sType == "string" ) {
-		return FieldDescriptor::String;
-	} else if ( sType == "int" ) {
-		return FieldDescriptor::Int;
-	} else if ( sType == "numeric" ) {
-		return FieldDescriptor::Numeric;
-	} else if ( sType == "binary" ) {
-		return FieldDescriptor::Binary;
-	} else {
-		return FieldDescriptor::None;
-	}
-}
-
 std::string Protoc::Utils::TemplateReplace( const std::string &content, const std::string &name, const std::string &value ) {
 	std::string result = "";
 	std::string sig = "$" + name + "$";

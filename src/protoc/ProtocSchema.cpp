@@ -39,8 +39,23 @@ bool ProtocSchema::ParseRoot( const TXMLNode &node ) {
 			for( int a = 0; a < node.numChilds(); a ++ ) {
 				TXMLNode child;
 				node.getChild(a, child);
-				if (!ParsePack(child)) {
-					TLog::logErr("Child node parsing failed '%s'!\n", child.toXML().c_str());
+				std::string cName = child.getName();
+				// i miss U switch(string)
+				if ( cName == "pack" || cName == "abstract") {
+					// packets
+					if (!ParsePack(child)) {
+						TLog::logErr("Packet node parsing failed '%s'!\n", child.toXML().c_str());
+						return false;
+					}
+				} else if (cName == "types") {
+					// types
+					if (!ParseTypes(child)) {
+						TLog::logErr("Types node parsing failed '%s'!\n", child.toXML().c_str());
+						return false;
+					}
+				} else {
+					// anything else
+					TLog::logErr("Unknown 'namespace' child '%s'!\n", child.toXML().c_str());
 					return false;
 				}
 			}
@@ -55,10 +70,55 @@ bool ProtocSchema::ParseRoot( const TXMLNode &node ) {
 	}
 }
 
+bool ProtocSchema::ParseTypes( const TXMLNode &node ) {
+	if (node.getName() == "types") {
+		// parsing types
+		for ( int a = 0; a < node.numChilds(); a ++ ) {
+			TXMLNode child;
+			node.getChild(a,child);
+			if ( child.getName() == "type" ) {
+				if (ParseType(child)) {
+					continue;
+				} else {
+					TLog::logErr("Unexpected node in 'types' - %s\n", child.getName().c_str());
+					return false;
+				}
+			} else {
+				TLog::logErr("Unexpected node in 'types' - %s\n", child.getName().c_str());
+				return false;
+			}
+		}
+		// whatever
+		return true;
+	} else {
+		TLog::logErr("Expecting node 'types'\n");
+		return false;
+	}
+}
+
+bool ProtocSchema::ParseType ( const TXMLNode &node ) {
+	if ( node.getName() == "type") {
+		std::string name = node.getAttrib("name");
+		if (rootNs->TypeByName(name) == 0 ) {
+			FieldTypeDescriptor *desc = new FieldTypeDescriptor();
+			desc->typeName = name;
+			rootNs->AddType(desc);
+			return true;
+		} else {
+			TLog::logErr("Type '%s' already named at %s\n", name.c_str(), node.toXML().c_str());
+			return false;
+		}
+	} else {
+		TLog::logErr("Expected node 'type' at %s", node.toXML().c_str());
+		return false;
+	}
+}
+
+
 bool ProtocSchema::ParsePack( const TXMLNode &node ) {
 	std::string nName = node.getName();
 	if (  nName == "pack" || nName == "abstract" ) {
-		PacketDescriptor *pack = new PacketDescriptor();
+		PacketDescriptor *pack = new PacketDescriptor(rootNs);
 		// set packet is abstract
 		if (  nName == "abstract" ) {
 			pack->isAbstract = true;
@@ -109,7 +169,7 @@ bool ProtocSchema::ParsePack( const TXMLNode &node ) {
 			return false;
 		}
 	} else {
-		TLog::logErr("Child nodes must be 'pack' or 'abstract'\n");
+		TLog::logErr("Expecting node 'pack' or 'abstract'\n");
 		return false;
 	}
 }
@@ -132,8 +192,8 @@ bool ProtocSchema::ParseField( const TXMLNode &node, PacketDescriptor *pack ) {
 				}
 				// parse field type
 				std::string sType = node.getAttrib("type");
-				field->fieldType = Utils::TypeByName(sType);
-				if ( field->fieldType  != FieldDescriptor::None ) {
+				field->fieldType = rootNs->TypeByName(sType);
+				if ( field->fieldType != 0) {
 					// field default value
 					field->fieldDefault = node.getAttrib("default");
 					// adding field in collection
@@ -158,4 +218,5 @@ bool ProtocSchema::ParseField( const TXMLNode &node, PacketDescriptor *pack ) {
 		return false;
 	}
 }
+
 
