@@ -9,6 +9,7 @@
 namespace Protoc {
 	class ProtocFormatter {
 	private:
+		std::string outFile;
 		NamespaceDescriptor *rootNs;
 		bool ParseRoot ( const TXMLNode &node);
 		bool ParsePacketSnippet ( const std::string &snippet );

@@ -1,4 +1,9 @@
 ﻿<snippets>
+	<!--
+		Optionally specify output file
+	-->
+	<Output file="Packets.cs"/>
+
 	<!-- 
 		Added before content
 		Variables:

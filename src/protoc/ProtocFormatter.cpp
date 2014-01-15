@@ -30,8 +30,23 @@ bool ProtocFormatter::ReadSnippets( const char*file ) {
 
 void ProtocFormatter::Format() {
 	std::string content = rootNs->Compile();
-	// TODO: format output here
-	printf ( "%s\n", content.c_str());
+	FILE *out = stdout;
+	FILE *fout = 0;
+	if ( outFile.length() > 0 ) {
+		out = fopen (outFile.c_str(), "wt");
+		fout = out;
+		if ( !out ) {
+			TLog::logErr("Can't open output file '%s'\n", outFile.c_str());
+			return;
+		} else {
+			TLog::logMsg("Output file: '%s'...\n", outFile.c_str());
+		}
+	}
+	fprintf ( out, "%s", content.c_str());
+	if (fout) {
+		TLog::logMsg("done.\n");
+		fclose(fout);
+	}
 }
 
 bool ProtocFormatter::ParseRoot( const TXMLNode &node ) {
@@ -140,6 +155,12 @@ bool ProtocFormatter::ParseRoot( const TXMLNode &node ) {
 					return false;
 				}
 			}
+			// output file
+			if ( name == "Output" ) {
+				outFile = child.getAttrib("file");
+				continue;
+			}
+			// unknown node
 			TLog::logErr("Unknown node in 'snippets' - '%s'\n", name.c_str());
 			return false;
 		}
