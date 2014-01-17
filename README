@@ -29,7 +29,7 @@ XML snippets features:
 	- global parser case template
 	- field templates for each declared type
 	
-Folder ./bin contains example test.xml.sample schema and some sample snippets that could be useful to figure out how dos it all works.
+Folder ./bin contains example test.xml.sample schema and some sample snippets that could be useful to figure out how does it all works.
 Provided XML files in NOT real working examples but just test cases. You may vary XML snippets code and structure to achive various results and use particular any SDK or library you want.
 
 Requirements
