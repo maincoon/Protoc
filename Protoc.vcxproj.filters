@@ -96,4 +96,7 @@
       <UniqueIdentifier>{8f0658e0-9950-4cc8-a48b-c14b56117f6a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="README" />
+  </ItemGroup>
 </Project>

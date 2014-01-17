@@ -35,6 +35,9 @@
     <ClCompile Include="src\tinyxml\tinyxmlerror.cpp" />
     <ClCompile Include="src\tinyxml\tinyxmlparser.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="README" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4B101133-BE02-4883-88FC-66D3C16C3392}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
