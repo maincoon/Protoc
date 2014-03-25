@@ -44,6 +44,7 @@ namespace Protoc {
 		std::string deserialize;
 		std::string size;
 		std::string ctor;
+		std::string dtor;
 
 		FieldDescriptor(PacketDescriptor *pd);
 
@@ -58,6 +59,7 @@ namespace Protoc {
 		std::string CompileDeserialize( const NamespaceDescriptor &ns, int num) const;
 		std::string CompileSize( const NamespaceDescriptor &ns, int num) const;
 		std::string CompileCtor( const NamespaceDescriptor &ns, int num) const;
+		std::string CompileDtor(const NamespaceDescriptor &ns, int num) const;
 	};
 
 	// Packet descriptor
@@ -69,6 +71,7 @@ namespace Protoc {
 		// snippets data
 		std::string pack;
 		std::string ctor;
+		std::string dtor;
 		std::string size;
 		std::string serializer;
 		std::string deserializer;
@@ -95,7 +98,9 @@ namespace Protoc {
 		std::string Compile(const NamespaceDescriptor &ns);
 		std::string CompileFields(const NamespaceDescriptor &ns);
 		std::string CompileCtorFields(const NamespaceDescriptor &ns);
+		std::string CompileDtorFields(const NamespaceDescriptor &ns);
 		std::string CompileCtor(const NamespaceDescriptor &ns);
+		std::string CompileDtor(const NamespaceDescriptor &ns);
 		std::string CompileSize(const NamespaceDescriptor &ns);
 		std::string CompileSerializer(const NamespaceDescriptor &ns);
 		std::string CompileSerializerFields(const NamespaceDescriptor &ns);

@@ -1,5 +1,6 @@
 # dest object files
 OBJS=main/main.o\
+main/Test.o\
 src/common/TLog.o\
 src/common/TXMLParser.o\
 src/protoc/ProtocData.o\

@@ -15,7 +15,7 @@ XML schema features:
 XML snippets features:
 	- template syntax for context variable replacements
 	- number of context variables for each template
-	- target language is free choice
+	- target language and SDK is on your choice
 	- header and footer templates
 	- default values for each field type
 	- packet separator template

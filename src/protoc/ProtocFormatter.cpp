@@ -102,6 +102,14 @@ bool ProtocFormatter::ParseRoot( const TXMLNode &node ) {
 					return false;
 				}
 			}
+			// pack ctor
+			if (name == "Dtor") {
+				if (ParsePacketDtor(child.getData())) {
+					continue;
+				} else {
+					return false;
+				}
+			}
 			// pack field
 			if ( name == "Field") {
 				if (ParsePacketField(child)) {
@@ -187,6 +195,18 @@ bool ProtocFormatter::ParsePacketCtor( const std::string &snippet ) {
 	if ( rootNs->nsPackets.size()) {
 		for ( size_t a = 0; a < rootNs->nsPackets.size(); a ++ ) {
 			rootNs->nsPackets[a]->ctor = snippet;
+		}
+		return true;
+	} else {
+		TLog::logErr("Schema must contain at leas one packet definition!\n");
+		return false;
+	}
+}
+
+bool ProtocFormatter::ParsePacketDtor(const std::string &snippet) {
+	if (rootNs->nsPackets.size()) {
+		for (size_t a = 0; a < rootNs->nsPackets.size(); a++) {
+			rootNs->nsPackets[a]->dtor = snippet;
 		}
 		return true;
 	} else {

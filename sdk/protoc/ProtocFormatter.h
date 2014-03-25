@@ -14,6 +14,7 @@ namespace Protoc {
 		bool ParseRoot ( const TXMLNode &node);
 		bool ParsePacketSnippet ( const std::string &snippet );
 		bool ParsePacketCtor ( const std::string &snippet );
+		bool ParsePacketDtor(const std::string &snippet);
 		bool ParsePacketField ( const TXMLNode &node );
 		bool ParseDefault ( const TXMLNode &node );
 		bool ParsePackeSize ( const std::string &snippet );

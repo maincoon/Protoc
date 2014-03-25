@@ -37,6 +37,9 @@
     <ClCompile Include="src\protoc\Utils.cpp">
       <Filter>src\protoc</Filter>
     </ClCompile>
+    <ClCompile Include="main\Test.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sdk\common\TLog.h">

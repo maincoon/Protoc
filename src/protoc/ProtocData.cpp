@@ -205,6 +205,7 @@ std::string PacketDescriptor::Compile( const NamespaceDescriptor &ns ) {
 	// compiling
 	std::string fields = CompileFields(ns);
 	std::string ctor = CompileCtor(ns);
+	std::string dtor = CompileDtor(ns);
 	std::string serializer = CompileSerializer(ns);
 	std::string deserializer = CompileDeserializer(ns);
 	std::string size = CompileSize(ns);
@@ -217,6 +218,7 @@ std::string PacketDescriptor::Compile( const NamespaceDescriptor &ns ) {
 	content = Utils::TemplateReplace(content, "deserializer", deserializer);
 	content = Utils::TemplateReplace(content, "parent", GetParentPackName());
 	content = Utils::TemplateReplace(content, "size", size);
+	content = Utils::TemplateReplace(content, "dtor", dtor);
 	return Utils::TemplateReplace(content, "ctor", ctor);
 }
 
@@ -239,6 +241,20 @@ std::string PacketDescriptor::CompileCtor( const NamespaceDescriptor &ns ) {
 		return "";
 	}
 }
+
+std::string PacketDescriptor::CompileDtor(const NamespaceDescriptor &ns) {
+	// not necessary for all languages
+	if (dtor.length()) {
+		std::string content = Utils::TemplateReplace(dtor, "ns", ns.GetNameSpace());
+		content = Utils::TemplateReplace(content, "id", Utils::ToString(packId));
+		content = Utils::TemplateReplace(content, "name", packName);
+		content = Utils::TemplateReplace(content, "parent", GetParentPackName());
+		return Utils::TemplateReplace(content, "fields", CompileDtorFields(ns));
+	} else {
+		return "";
+	}
+}
+
 
 std::string PacketDescriptor::CompileSize( const NamespaceDescriptor &ns ) {
 	std::string content = Utils::TemplateReplace(size, "ns", ns.GetNameSpace());
@@ -329,6 +345,18 @@ std::string PacketDescriptor::CompileCtorFields( const NamespaceDescriptor &ns )
 	return content;
 }
 
+std::string PacketDescriptor::CompileDtorFields(const NamespaceDescriptor &ns) {
+	// compile inherited fields
+	std::string content = "";
+	if (packParent) {
+		content += packParent->CompileDtorFields(ns);
+	}
+	for (size_t a = 0; a < packFields.size(); a++) {
+		content += packFields[a]->CompileDtor(ns, a);
+	}
+	return content;
+}
+
 std::string PacketDescriptor::CompileSizeFields( const NamespaceDescriptor &ns )
 {
 	// compile inherited fields
@@ -406,6 +434,10 @@ std::string FieldDescriptor::CompileCtor( const NamespaceDescriptor &ns, int num
 	return CompileFragment(ns, ctor, num);
 }
 
+std::string FieldDescriptor::CompileDtor(const NamespaceDescriptor &ns, int num) const {
+	return CompileFragment(ns, dtor, num);
+}
+
 std::string FieldDescriptor::CompileSerialize( const NamespaceDescriptor &ns, int num ) const {
 	return CompileFragment(ns, serialize, num);
 }
@@ -450,9 +482,14 @@ bool FieldDescriptor::ParseField( const TXMLNode &node ) {
 			size = child.getData();
 			continue;
 		}
-		// field size definition
+		// field constructor definition
 		if ( nName == "Ctor" ) {
 			ctor = child.getData();
+			continue;
+		}
+		// field destructor definition
+		if (nName == "Dtor") {
+			dtor = child.getData();
 			continue;
 		}
 		// unknown node
