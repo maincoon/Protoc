@@ -261,7 +261,12 @@ std::string PacketDescriptor::CompileSize( const NamespaceDescriptor &ns ) {
 	content = Utils::TemplateReplace(content, "id", Utils::ToString(packId));
 	content = Utils::TemplateReplace(content, "name", packName);
 	content = Utils::TemplateReplace(content, "parent", GetParentPackName());
-	return Utils::TemplateReplace(content, "fields", CompileSizeFields(ns));
+	// no fields hack
+	std::string fieldSize = CompileSizeFields(ns);
+	if (fieldSize.length() == 0) {
+		fieldSize = "0";
+	}
+	return Utils::TemplateReplace(content, "fields", fieldSize);
 }
 
 std::string PacketDescriptor::CompileSerializerFields( const NamespaceDescriptor &ns ) {
