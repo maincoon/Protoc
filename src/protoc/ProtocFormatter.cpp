@@ -71,6 +71,11 @@ bool ProtocFormatter::ParseRoot( const TXMLNode &node ) {
 				rootNs->packSeparator = child.getData();
 				continue;
 			}
+			// default packet parent
+			if (name == "DefaultParent") {
+				rootNs->defaultParentName = child.getData();
+				continue;
+			}
 			// packet separator
 			if ( name == "NSSeparator") {
 				rootNs->nsSeparator = child.getData();

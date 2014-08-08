@@ -39,6 +39,11 @@
   <ItemGroup>
     <None Include="README" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="bin\cpp.binary.xml" />
+    <Xml Include="bin\cs.binary.xml" />
+    <Xml Include="bin\test.xml" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4B101133-BE02-4883-88FC-66D3C16C3392}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

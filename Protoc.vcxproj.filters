@@ -98,8 +98,22 @@
     <Filter Include="src\tinyxml">
       <UniqueIdentifier>{8f0658e0-9950-4cc8-a48b-c14b56117f6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Test">
+      <UniqueIdentifier>{34c00abe-3b2b-49b4-bd4d-f6ffc4256744}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="README" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="bin\cpp.binary.xml">
+      <Filter>Test</Filter>
+    </Xml>
+    <Xml Include="bin\cs.binary.xml">
+      <Filter>Test</Filter>
+    </Xml>
+    <Xml Include="bin\test.xml">
+      <Filter>Test</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

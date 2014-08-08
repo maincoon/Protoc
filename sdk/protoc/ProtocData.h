@@ -93,6 +93,7 @@ namespace Protoc {
 		std::string GetParentPackName() const;
 		void AddField ( FieldDescriptor* field );
 		std::string GetPackId() const;
+		void CopyInheritedFields(std::vector <FieldDescriptor*> &copy);
 
 		// compile snippets
 		std::string Compile(const NamespaceDescriptor &ns);
@@ -131,6 +132,7 @@ namespace Protoc {
 		std::string nsRoot;
 		std::string nsNext;
 		std::string packSeparator;
+		std::string defaultParentName;
 		std::string nsSeparator;
 		std::string parser;
 
