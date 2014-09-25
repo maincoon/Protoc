@@ -24,7 +24,7 @@ namespace Protoc {
 	public:
 		ProtocFormatter(NamespaceDescriptor *ns);
 		bool ReadSnippets( const char*file);
-		void Format ();
+		void Format(const char *outFile = 0);
 	};
 }
 

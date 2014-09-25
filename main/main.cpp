@@ -7,8 +7,8 @@
 using namespace Protoc;
 
 int main  ( int f, char **ff) {
-	if ( f != 3 ) {
-		printf ( "usage: %s <schema.xml> <snippets.xml>\n", ff[0]);
+	if ( f < 3 ) {
+		printf ( "usage: %s <schema.xml> <snippets.xml> [output file]\n", ff[0]);
 	} else {
 		NamespaceDescriptor nsDesc;
 		ProtocSchema protoc(&nsDesc);
@@ -16,7 +16,11 @@ int main  ( int f, char **ff) {
 			ProtocFormatter formatter(&nsDesc);
 			if ( formatter.ReadSnippets(ff[2])) {
 				if ( protoc.CheckIntegrity()) {
-					formatter.Format();
+					if (f == 4) {
+						formatter.Format(ff[3]);
+					} else {
+						formatter.Format();
+					}
 				}
 			}
 		}

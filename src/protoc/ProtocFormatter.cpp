@@ -28,10 +28,13 @@ bool ProtocFormatter::ReadSnippets( const char*file ) {
 	}
 }
 
-void ProtocFormatter::Format() {
+void ProtocFormatter::Format(const char *outFileName) {
 	std::string content = rootNs->Compile();
 	FILE *out = stdout;
 	FILE *fout = 0;
+	if (outFileName) {
+		outFile = outFileName;
+	}
 	if ( outFile.length() > 0 ) {
 		out = fopen (outFile.c_str(), "wt");
 		fout = out;
