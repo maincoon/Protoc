@@ -374,15 +374,20 @@ std::string PacketDescriptor::CompileSizeFields(const NamespaceDescriptor &ns) {
 			content += "+";
 		}
 	}
-	for (size_t a = 0; a < packFields.size(); a++) {
-		std::string sz = packFields[a]->CompileSize(ns, a);
-		if (sz.length()) {
-			content += sz;
-			if (a < packFields.size() - 1) {
-				content += "+";
+	if (packFields.size()) {
+		for (size_t a = 0; a < packFields.size(); a++) {
+			std::string sz = packFields[a]->CompileSize(ns, a);
+			if (sz.length()) {
+				content += sz;
+				if (a < packFields.size() - 1) {
+					content += "+";
+				}
 			}
 		}
-
+	} else {
+		if (!content.length()) {
+			content = "0";
+		}
 	}
 	return content;
 }
