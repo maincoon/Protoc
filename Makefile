@@ -16,7 +16,7 @@ src/tinyxml/tinyxmlparser.o
 # options
 DEFS=-DTARGET_UNIX
 INCLUDE=-Isdk
-CFLAGS=-O3 -g0 -Wall $(DEFS) $(INCLUDE) $(ADDFLAGS)
+CFLAGS=-O3 -g0 -Wall -std=c++11 $(DEFS) $(INCLUDE) $(ADDFLAGS)
 LFLAGS=-g3 
 PROJ=bin/Protoc
 

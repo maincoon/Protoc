@@ -1,11 +1,11 @@
-﻿Protoc is context and type free protocol compiler, data serizlizer and deserializer based on XML declarations and code snippets.
+﻿Protoc is context and type free protocol compiler, data serializer and deserializer based on XML declarations and code snippets.
 
 About
 -----
 
 Workset consists of two XML files - data schema and code snippets.
 First XML file declares data formats using simple syntax (let's call it "schema"). 
-Second XML file defines code snippets (let's call it "snippets") used to create global data parser with serializer and deserizlizer pair for each data type.
+Second XML file defines code snippets (let's call it "snippets") used to create global data parser with serializer and deserializer pair for each data type.
 
 XML schema features:
 	- abstract type name declarations
@@ -30,7 +30,7 @@ XML snippets features:
 	- field templates for each declared type
 	
 Folder ./bin contains example test.xml.sample schema and some sample snippets that could be useful to figure out how does it all works.
-Provided XML files in NOT real working examples but just test cases. You may vary XML snippets code and structure to achive various results and use particular any SDK or library you want.
+Provided XML files in NOT real working examples but just test cases. You may vary XML snippets code and structure to achieve various results and use particular any SDK or library you want.
 
 Requirements
 ------------
